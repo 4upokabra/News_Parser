@@ -84,6 +84,8 @@ celerybeat-schedule
 
 # Environments
 .env
+*.session
+*.session-journal
 .venv
 env/
 venv/

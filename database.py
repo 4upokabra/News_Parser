@@ -2,12 +2,23 @@ from sqlalchemy import create_engine, Column, Integer, String, Text, TIMESTAMP, 
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
 import os
-# Создание базы данных и подключение к ней
-engine = create_engine('postgresql://postgres:REDACTED@db:5432/ParsNewsDB')
 
 
-# Создание базы данных и подключение к ней
-engine = create_engine('postgresql://postgres:REDACTED@localhost/ParsNewsDB')
+def database_url() -> str:
+    url = os.getenv("DATABASE_URL")
+    if url:
+        return url
+    password = os.getenv("POSTGRES_PASSWORD")
+    if not password:
+        raise RuntimeError("Set DATABASE_URL or POSTGRES_PASSWORD")
+    user = os.getenv("POSTGRES_USER", "postgres")
+    host = os.getenv("POSTGRES_HOST", "db")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    name = os.getenv("POSTGRES_DB", "ParsNewsDB")
+    return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+
+
+engine = create_engine(database_url())
 
 Base = declarative_base()
 
